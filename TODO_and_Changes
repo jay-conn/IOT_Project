@@ -1,0 +1,5 @@
+//Changes
+I updated the UI and added a login db using android room
+
+//TODO
+Still have to add the db for the items, creates pages (and sqls) to add and edit devices and view device status
