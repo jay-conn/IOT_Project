@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="button_background">#FF97F1FF</color>
     <color name="textBox_underline">#121819</color>
+    <color name="background">#0e0e25</color>
+    0e0e25
 </resources>
