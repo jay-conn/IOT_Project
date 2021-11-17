@@ -4,6 +4,8 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import java.util.List;
+
 @Dao
 public interface UserDao {
 
@@ -12,4 +14,5 @@ public interface UserDao {
 
     @Query("SELECT * from users where username=( :username) and password=(:password)")
     UserEntity login(String username, String password);
+
 }

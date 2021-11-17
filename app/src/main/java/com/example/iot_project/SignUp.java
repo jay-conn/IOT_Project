@@ -75,7 +75,8 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //do stuff
-                goToLoginWindow();
+                //goToLoginWindow();
+                //goToHomeWindow();
             }
         });
 
@@ -132,5 +133,9 @@ public class SignUp extends AppCompatActivity {
     private void goToLoginWindow() {
         Intent intentLogin = new Intent(SignUp.this, Login.class);
         startActivity(intentLogin);
+    }
+    private void goToHomeWindow() {
+        Intent intentHome = new Intent(SignUp.this, Home.class);
+        startActivity(intentHome);
     }
 }

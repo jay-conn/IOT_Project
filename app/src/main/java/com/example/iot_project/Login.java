@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -20,7 +21,7 @@ public class Login extends AppCompatActivity {
 
     //EditText usernameText, passwordText;
     EditText userInput, passInput;
-    ImageButton buttom;
+    ImageButton button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +29,8 @@ public class Login extends AppCompatActivity {
         //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_login1);
+        userInput = findViewById(R.id.userInput);
+        passInput = findViewById(R.id.passInput);
 
         ImageButton button = (ImageButton) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -40,7 +43,7 @@ public class Login extends AppCompatActivity {
                 }
                 else{
                     UserDB userDB = UserDB.getUserDB(getApplicationContext());
-                    UserDao userDao = userDB.userDao();
+                    final UserDao userDao = userDB.userDao();
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -53,10 +56,13 @@ public class Login extends AppCompatActivity {
                                     }
                                 });
                             }else{
+                                //Toast.makeText(getApplicationContext(), "Welcome", Toast.LENGTH_SHORT).show();
                                 String user = userEntity.username;
+                                Log.d("Test", user);
                                 startActivity(new Intent(
                                         Login.this, Home.class)
-                                        .putExtra("name", user));
+                                        .putExtra("user", user));
+                                //goToHomeWindow();
                             }
                         }
                     }).start();
@@ -71,6 +77,7 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 //do stuff
                 goToSignUpWindow();
+                //goToHomeWindow();
             }
         });
 
@@ -101,5 +108,9 @@ public class Login extends AppCompatActivity {
     private void goToSignUpWindow() {
         Intent intentSignup = new Intent(Login.this,SignUp.class);
         startActivity(intentSignup);
+    }
+    private void goToHomeWindow() {
+        Intent intentHome = new Intent(Login.this, Home.class);
+        startActivity(intentHome);
     }
 }
