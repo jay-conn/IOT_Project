@@ -16,51 +16,32 @@ import android.widget.Toast;
 
 public class Login extends AppCompatActivity {
 
-    TextView createAccount;
+    EditText userNameTextBox, passwordTextBox;
+    DBHelper db;
 
-    //EditText usernameText, passwordText;
-    EditText userInput, passInput;
-    ImageButton buttom;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
-        setContentView(R.layout.activity_login1);
+        setContentView(R.layout.activity_login);
+        userNameTextBox = findViewById(R.id.usernameTextBox); // username
+        passwordTextBox = findViewById(R.id.passwordTextBox); // first password
+        db = new DBHelper(this);
 
         ImageButton button = (ImageButton) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //Add to DB then Redirect
-                String userText = userInput.getText().toString();
-                String passText = passInput.getText().toString();
-                if (userText.isEmpty() || passText.isEmpty()){
-                    Toast.makeText(getApplicationContext(), "Please enter username and password", Toast.LENGTH_SHORT).show();
+                String username = userNameTextBox.getText().toString();
+                String password = passwordTextBox.getText().toString();
+                if(db.checkLogin(username, password)){
+                    //Toast.makeText(Login.this, "User found on the database",Toast.LENGTH_LONG).show();
+                    Intent intentHome = new Intent(Login.this, Home.class);
+                    intentHome.putExtra("username",username);
+                    startActivity(intentHome);
+                }else{
+                    Toast.makeText(Login.this, "User not found",Toast.LENGTH_LONG).show();
                 }
-                else{
-                    UserDB userDB = UserDB.getUserDB(getApplicationContext());
-                    UserDao userDao = userDB.userDao();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            UserEntity userEntity = userDao.login(userText, passText);
-                            if (userEntity == null){
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(getApplicationContext(), "Invalid Credentials", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }else{
-                                String user = userEntity.username;
-                                startActivity(new Intent(
-                                        Login.this, Home.class)
-                                        .putExtra("name", user));
-                            }
-                        }
-                    }).start();
-                }
+
             }
         });
 

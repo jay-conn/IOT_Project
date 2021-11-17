@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -15,56 +14,44 @@ public class SignUp extends AppCompatActivity {
 
     TextView createAccount;
     //EditText emailText, passwordText, usernameText, nameText;
-    EditText userInput0, userInput, passInput;
+    EditText userNameTextBox, firstPasswordTextBox, secondPasswordTextbox;
     ImageButton button;
+    DBHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
-        setContentView(R.layout.activity_sign_up1);
-        userInput0 = findViewById(R.id.userInput0);
-        userInput = findViewById(R.id.userInput);
-        passInput = findViewById(R.id.passInput);
+        setContentView(R.layout.activity_sign_up);
+        userNameTextBox = findViewById(R.id.usernameTextBox); // username
+        firstPasswordTextBox = findViewById(R.id.firstPasswordTextBox); // first password
+        secondPasswordTextbox = findViewById(R.id.secondPasswordTextBox); // second password
+        db = new DBHelper(this);
+
 
         ImageButton button = (ImageButton) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View v) {
                 //Add to DB then Redirect
-                UserEntity userEntity = new UserEntity();
-                userEntity.setUsername(userInput0.getText().toString());
-                userEntity.setPassword(passInput.getText().toString());
+                String username = userNameTextBox.getText().toString();
+                String password = firstPasswordTextBox.getText().toString();
+                String secondPassword = secondPasswordTextbox.getText().toString();
+                if(password.equals(secondPassword)){
+                    if(db.insertUserData(username, password)){
+                        Toast.makeText(SignUp.this, "User Registered",Toast.LENGTH_LONG).show();
+                    }
+                    else{
+                        Toast.makeText(SignUp.this, "User Registration Failed",Toast.LENGTH_LONG).show();
+                    }
 
-                if (isValid(userEntity)){
-                    //add user
-                    UserDB userDB = UserDB.getUserDB(getApplicationContext());
-                    final UserDao userDao = userDB.userDao();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            userDao.registerUser(userEntity);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(getApplicationContext(), "User added", Toast.LENGTH_SHORT).show();
-                                    //1 second delay
-                                    Handler handler = new Handler();
-                                    handler.postDelayed(new Runnable() {
-                                        public void run() {
-                                    //Go to Login
-                                            goToLoginWindow();
-                                        }
-                                    }, 1000);
-                                }
-                            });
-                        }
-                    }).start();
+
+
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), "Please enter username and password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignUp.this, "Password is not matching! Try Again",Toast.LENGTH_LONG).show();
                 }
+
             }
         });
 
@@ -79,55 +66,9 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        /* nullEmail = (TextView) findViewById(R.id.nullEmail);
-        nullPassword = (TextView) findViewById(R.id.nullPassword);
-        nullUsername = (TextView) findViewById(R.id.nullUsername);
-        nullName = (TextView) findViewById(R.id.nullName);
 
-        emailText = (EditText) findViewById(R.id.emailTextBox);
-        passwordText = (EditText) findViewById(R.id.passwordTextBox);
-        usernameText = (EditText) findViewById(R.id.usernameTextBox);
-        nameText = (EditText) findViewById(R.id.nameTextBox);
-
-        nullEmail.setVisibility(View.GONE);
-        nullPassword.setVisibility(View.GONE);
-        nullUsername.setVisibility(View.GONE);
-        nullName.setVisibility(View.GONE);
     }
 
-    public void checkFieldsAndForwardToLogin(View view) {
-        boolean emptyFieldsDetected = false;
-        if(emailText.getText().toString().matches("")){
-            nullEmail.setVisibility(View.VISIBLE);
-            emptyFieldsDetected = true;
-        }
-        if(passwordText.getText().toString().matches("")){
-            nullPassword.setVisibility(View.VISIBLE);
-            emptyFieldsDetected = true;
-        }
-        if(usernameText.getText().toString().matches("")){
-            nullUsername.setVisibility(View.VISIBLE);
-            emptyFieldsDetected = true;
-        }
-        if(nameText.getText().toString().matches("")){
-            nullName.setVisibility(View.VISIBLE);
-            emptyFieldsDetected = true;
-        }
-        if(!emptyFieldsDetected){
-            Intent intent = new Intent(this, Login.class);
-            startActivity(intent);
-        }
-
-         */
-    }
-    private boolean isValid (UserEntity userEntity){
-        if (userEntity.getUsername().isEmpty() ||
-            userEntity.getPassword().isEmpty() ||
-            userEntity.getUsername().isEmpty()) {
-            return false;
-        }
-        return true;
-    }
 
     private void goToLoginWindow() {
         Intent intentLogin = new Intent(SignUp.this, Login.class);
